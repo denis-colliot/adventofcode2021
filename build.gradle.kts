@@ -28,5 +28,5 @@ application {
     val day = project.findProperty("day")
         ?.toString()?.toIntOrNull()
         ?: 1
-    mainClass.set("com.adventofcode.day$day.Day${day}Kt")
+    mainClass.set("com.adventofcode.day$day.MainKt")
 }
