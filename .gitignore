@@ -1,0 +1,24 @@
+# IntelliJ
+.idea/*
+!.idea/codeStyles/
+*.iml
+*.iws
+*.ipr
+
+# Windows
+bash.exe.stackdump
+vim.exe.stackdump
+
+# MacOS
+.DS_Store
+
+# Generated files
+bin/
+gen/
+captures/
+
+# Gradle files
+.gradle/
+build/
+out/
+.gradle
