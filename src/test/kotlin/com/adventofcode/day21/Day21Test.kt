@@ -40,7 +40,7 @@ class Day21Test {
         val player = Player(name = "X", space = 4)
 
         // When
-        val result = player.play(listOf(1, 2, 3))
+        val result = player.play(listOf(1, 2, 3), winningScore = 1000)
 
         // Then
         assertEquals(Player(name = "X", space = 10, score = 10), result)
@@ -52,7 +52,7 @@ class Day21Test {
         val player = Player(name = "X", space = 6, score = 20)
 
         // When
-        val result = player.play(listOf(19, 20, 21))
+        val result = player.play(listOf(19, 20, 21), winningScore = 1000)
 
         // Then
         assertEquals(Player(name = "X", space = 6, score = 26), result)
@@ -64,7 +64,7 @@ class Day21Test {
         val player = Player(name = "X", space = 4, score = 990)
 
         // When
-        val result = player.play(listOf(91, 92, 93))
+        val result = player.play(listOf(91, 92, 93), winningScore = 1000)
 
         // Then
         assertEquals(Player(name = "X", space = 10, score = 1000, isWinner = true), result)
@@ -80,6 +80,18 @@ class Day21Test {
 
         // Then
         assertEquals(739785, result)
+    }
+
+    @Test
+    fun `should play game with quantum die`() {
+        // Given
+        val game = testInput.parseInput()
+
+        // When
+        val result = game.quantumPlay()
+
+        // Then
+        assertEquals(444356092776315 to 341960390180808, result)
     }
 
 }

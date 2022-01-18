@@ -25,12 +25,12 @@ fun Game.play(dieRollsTotalCount: Int = 0, latestDieRoll: Die = 0, currentPlayer
         else -> {
             val nextDieRolls = latestDieRoll.roll(3)
             when (currentPlayer) {
-                player1 -> copy(player1 = player1.play(nextDieRolls)).play(
+                player1 -> copy(player1 = player1.play(nextDieRolls, 1000)).play(
                     dieRollsTotalCount = dieRollsTotalCount + nextDieRolls.size,
                     latestDieRoll = nextDieRolls.last(),
                     currentPlayer = player2
                 )
-                else -> copy(player2 = player2.play(nextDieRolls)).play(
+                else -> copy(player2 = player2.play(nextDieRolls, 1000)).play(
                     dieRollsTotalCount = dieRollsTotalCount + nextDieRolls.size,
                     latestDieRoll = nextDieRolls.last(),
                     currentPlayer = player1
@@ -42,16 +42,54 @@ fun Game.play(dieRollsTotalCount: Int = 0, latestDieRoll: Die = 0, currentPlayer
 fun Die.roll(rollsNumber: Int): DieRolls =
     (this + 1..this + rollsNumber).map { it.modulo(100) }
 
-fun Player.play(dieRolls: DieRolls): Player {
+fun Player.play(dieRolls: DieRolls, winningScore: Int): Player {
     val newSpace = (space + dieRolls.sum()).modulo(10)
     val newScore = score + newSpace
-    return Player(name = name, space = newSpace, score = newScore, isWinner = newScore >= 1000)
+    return Player(name = name, space = newSpace, score = newScore, isWinner = newScore >= winningScore)
 }
 
 private fun Int.modulo(modulo: Int): Int =
     when (val moduloResult = this % modulo) {
         0 -> modulo
         else -> moduloResult
+    }
+
+fun Game.quantumPlay(latestDieRoll: Die = 0, currentPlayer: Player = player1): Pair<Long, Long> =
+    when {
+        player1.isWinner -> 1L to 0L
+        player2.isWinner -> 0L to 1L
+        else -> {
+            when (currentPlayer) {
+                player1 -> arrayOf(
+                    copy(player1 = player1.play(listOf(1), winningScore = 21)).quantumPlay(
+                        latestDieRoll = 1,
+                        currentPlayer = player2
+                    ),
+                    copy(player1 = player1.play(listOf(2), winningScore = 21)).quantumPlay(
+                        latestDieRoll = 2,
+                        currentPlayer = player2
+                    ),
+                    copy(player1 = player1.play(listOf(3), winningScore = 21)).quantumPlay(
+                        latestDieRoll = 3,
+                        currentPlayer = player2
+                    )
+                ).reduce { acc, result -> acc.first + result.first to acc.second + result.second }
+                else -> arrayOf(
+                    copy(player2 = player2.play(listOf(1), winningScore = 21)).quantumPlay(
+                        latestDieRoll = listOf(1).last(),
+                        currentPlayer = player1
+                    ),
+                    copy(player2 = player2.play(listOf(2), winningScore = 21)).quantumPlay(
+                        latestDieRoll = listOf(2).last(),
+                        currentPlayer = player1
+                    ),
+                    copy(player2 = player2.play(listOf(3), winningScore = 21)).quantumPlay(
+                        latestDieRoll = listOf(3).last(),
+                        currentPlayer = player1
+                    )
+                ).reduce { acc, result -> acc.first + result.first to acc.second + result.second }
+            }
+        }
     }
 
 fun main() {
